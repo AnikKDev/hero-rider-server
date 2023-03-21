@@ -1,0 +1,15 @@
+user registered data==>
+
+Full name,
+email,
+age,
+address,
+phone,
+driving licence
+picture, 
+area, 
+nid picture,
+profile picture,
+car information (name, model, name palate),
+password,
+vehicle type (car, bike).
