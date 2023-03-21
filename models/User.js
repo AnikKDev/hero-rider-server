@@ -6,6 +6,8 @@ const userSchema = new mongoose.Schema(
     fullName: {
       type: String,
       required: true,
+      minlength: [4, "Name can't be less than 4 characters"],
+      maxlength: [16, "Name can't be more than 16 characters"],
     },
     email: {
       type: String,
@@ -67,8 +69,6 @@ const userSchema = new mongoose.Schema(
             this.role === "rider"
           );
         },
-        minlength: [4, "Name can't be less than 4 characters"],
-        maxlength: [16, "Name can't be more than 16 characters"],
       },
       model: {
         type: String,

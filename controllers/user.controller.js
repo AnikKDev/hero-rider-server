@@ -6,11 +6,14 @@ const { generateToken } = require("../utils/generateToken");
 // add a user
 exports.createUser = async (req, res, next) => {
   try {
-    // console.log(req.body);
+    console.log(req.body.role);
+    const userInfo = { email: req.body.email, role: req.body.role };
+    const token = generateToken(userInfo);
     const newUser = await createUserServices(req.body);
+    const { password, ...others } = newUser.toObject();
     res.status(201).send({
       success: true,
-      data: newUser,
+      data: { others, token },
     });
   } catch (err) {
     res.status(400).json(err);
