@@ -1,10 +1,6 @@
 const mongoose = require("mongoose");
-
-const validateURL = (url) => {
-  // regular expression to validate URL
-  const urlRegex = new RegExp(/^(ftp|http|https):\/\/[^ "]+$/);
-  return urlRegex.test(url);
-};
+const validator = require("validator");
+const bcrypt = require("bcrypt");
 const userSchema = new mongoose.Schema(
   {
     fullName: {
@@ -15,6 +11,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
+      trim: true,
     },
     age: {
       type: Number,
@@ -35,7 +32,7 @@ const userSchema = new mongoose.Schema(
         this.role === "rider";
       },
       validate: [
-        validateURL,
+        validator.isURL,
         "Please provide a valid URL for the driving licence picture.",
       ],
     },
@@ -49,7 +46,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       validate: [
-        validateURL,
+        validator.isURL,
         "Please provide a valid URL for the NID picture.",
       ],
     },
@@ -57,7 +54,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       validate: [
-        validateURL,
+        validator.isURL,
         "Please provide a valid URL for the profile picture.",
       ],
     },
@@ -104,8 +101,29 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: true,
-      minlength: [6, "Password must be at least 8 characters long"],
+      required: [true, "Password is required"],
+      validate: {
+        validator: (value) =>
+          validator.isStrongPassword(value, {
+            minLength: 6,
+            minLowercase: 3,
+            minNumbers: 1,
+            minUppercase: 1,
+            minSymbols: 1,
+          }),
+        message:
+          "Password {VALUE} is not strong enough. (minimum length: 6, minimum lowercase: 3, minimum numbers: 1, minimum uppercase: 1, minimum symbols: 1)",
+      },
+    },
+    confirmPassword: {
+      type: String,
+      required: [true, "Please confirm your password"],
+      validate: {
+        validator: function (value) {
+          return value === this.password;
+        },
+        message: "Passwords don't match!",
+      },
     },
     role: {
       type: String,
@@ -118,6 +136,23 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-const User = mongoose.model("User", userSchema);
+// hashing the password
+userSchema.pre("save", function (next) {
+  const password = this.password;
+  // console.log(password)
+  // const hashedPassword = bcrypt.hashSync(password);
+  const salt = bcrypt.genSaltSync(10);
+  const hashedPassword = bcrypt.hashSync(password, salt);
+  this.password = hashedPassword;
+  this.confirmPassword = undefined;
 
+  next();
+});
+// check both password and salt
+userSchema.methods.comparePassword = function (password, hashedPassword) {
+  const isPasswordValid = bcrypt.compareSync(password, hashedPassword);
+  return isPasswordValid;
+};
+
+const User = mongoose.model("User", userSchema);
 module.exports = User;
