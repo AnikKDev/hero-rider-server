@@ -31,7 +31,9 @@ const userSchema = new mongoose.Schema(
     },
     drivingLicencePicture: {
       type: String,
-      required: true,
+      required: () => {
+        this.role === "rider";
+      },
       validate: [
         validateURL,
         "Please provide a valid URL for the driving licence picture.",
@@ -39,7 +41,9 @@ const userSchema = new mongoose.Schema(
     },
     area: {
       type: String,
-      required: true,
+      required: () => {
+        this.role === "rider";
+      },
     },
     nidPicture: {
       type: String,
@@ -63,7 +67,7 @@ const userSchema = new mongoose.Schema(
         required: function () {
           return (
             (this.vehicleType === "car" || this.vehicleType === "bike") &&
-            this.userRole === "rider"
+            this.role === "rider"
           );
         },
         minlength: [4, "Name can't be less than 4 characters"],
@@ -74,7 +78,7 @@ const userSchema = new mongoose.Schema(
         required: function () {
           return (
             (this.vehicleType === "car" || this.vehicleType === "bike") &&
-            this.userRole === "rider"
+            this.role === "rider"
           );
         },
       },
@@ -83,7 +87,7 @@ const userSchema = new mongoose.Schema(
         required: function () {
           return (
             (this.vehicleType === "car" || this.vehicleType === "bike") &&
-            this.userRole === "rider"
+            this.role === "rider"
           );
         },
       },
@@ -93,6 +97,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ["car", "bike"],
       required: true,
+    },
+    isAdmin: {
+      type: Boolean,
+      default: false,
     },
     password: {
       type: String,

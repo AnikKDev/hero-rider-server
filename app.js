@@ -11,7 +11,6 @@ const usersRoutes = require("./routes/user.route");
 // =================
 // ======routes will be here================
 app.use("/api/v1/users", usersRoutes);
-// app.use("/api/v1/blogs", blogsRoutes);
 
 app.get("/", (req, res, next) => {
   res.send("yayyy route is working");

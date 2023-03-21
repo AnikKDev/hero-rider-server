@@ -1,5 +1,5 @@
+const User = require("../models/User");
 module.exports.createUserServices = async (userData) => {
-  const createUser = await Blog.create(userData);
-  console.log("hello from create user service");
+  const createUser = await User.create(userData);
   return createUser;
 };
