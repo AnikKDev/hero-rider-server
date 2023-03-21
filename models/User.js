@@ -122,7 +122,7 @@ const userSchema = new mongoose.Schema(
         validator: function (value) {
           return value === this.password;
         },
-        message: "Passwords don't match!",
+        message: "Passwords didn't match!",
       },
     },
     role: {

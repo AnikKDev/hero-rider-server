@@ -1,7 +1,10 @@
-const { createUser } = require("../controllers/user.controller");
+const { createUser, login, getMe } = require("../controllers/user.controller");
 
 const router = require("express").Router();
-
+const verifyToken = require("../middlewares/verifyToken");
 // using routes
-router.route("/add").post(createUser);
+router.route("/register").post(createUser);
+router.route("/signin").post(login);
+
+router.get("/me", verifyToken, getMe);
 module.exports = router;
