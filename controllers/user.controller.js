@@ -2,6 +2,7 @@ const {
   createUserServices,
   findUserByEmailService,
   getAllUsersServices,
+  bulkUpdateUsersServices,
 } = require("../services/user.services");
 const { generateToken } = require("../utils/generateToken");
 // add a user
@@ -24,8 +25,18 @@ exports.createUser = async (req, res, next) => {
 exports.getAllUsers = async (req, res, next) => {
   try {
     console.log(req.query);
-    const allUsers = await getAllUsersServices(req.query);
-    res.status(200).json({ success: true, data: allUsers });
+    const { users, total } = await getAllUsersServices(req.query);
+    res.status(200).json({ success: true, data: users, total: total });
+  } catch (err) {
+    res.status(400).json(err);
+  }
+};
+// bulk update user
+exports.bulkUpdate = async (req, res, next) => {
+  try {
+    console.log(req.body);
+    const data = await bulkUpdateUsersServices(req.body);
+    res.status(200).json({ success: true, data: data });
   } catch (err) {
     res.status(400).json(err);
   }
