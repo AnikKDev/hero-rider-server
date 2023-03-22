@@ -27,6 +27,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       minlength: [11, "Phone Number must be at least 11 numbers"],
+      trim: true,
     },
     drivingLicencePicture: {
       type: String,
@@ -95,26 +96,32 @@ const userSchema = new mongoose.Schema(
       enum: ["car", "bike"],
       required: true,
     },
-    isAdmin: {
+    /* isAdmin: {
       type: Boolean,
       default: false,
-    },
+    }, */
     password: {
       type: String,
       required: [true, "Password is required"],
-      validate: {
-        validator: (value) =>
-          validator.isStrongPassword(value, {
+      /* validate: {
+        validator: function (value) {
+          if (this.role === "admin") {
+            // skip password validation for admin users
+            return true;
+          }
+          return validator.isStrongPassword(value, {
             minLength: 6,
             minLowercase: 3,
             minNumbers: 1,
             minUppercase: 1,
             minSymbols: 1,
-          }),
+          });
+        },
         message:
           "Password {VALUE} is not strong enough. (minimum length: 6, minimum lowercase: 3, minimum numbers: 1, minimum uppercase: 1, minimum symbols: 1)",
-      },
+      }, */
     },
+
     confirmPassword: {
       type: String,
       required: [true, "Please confirm your password"],
@@ -144,6 +151,8 @@ userSchema.pre("save", function (next) {
   const salt = bcrypt.genSaltSync(10);
   const hashedPassword = bcrypt.hashSync(password, salt);
   this.password = hashedPassword;
+  this.fullName = this.fullName.toLowerCase();
+  this.email = this.email.toLowerCase();
   this.confirmPassword = undefined;
 
   next();

@@ -1,6 +1,7 @@
 const {
   createUserServices,
   findUserByEmailService,
+  getAllUsersServices,
 } = require("../services/user.services");
 const { generateToken } = require("../utils/generateToken");
 // add a user
@@ -15,6 +16,16 @@ exports.createUser = async (req, res, next) => {
       success: true,
       data: { others, token },
     });
+  } catch (err) {
+    res.status(400).json(err);
+  }
+};
+// get all users
+exports.getAllUsers = async (req, res, next) => {
+  try {
+    console.log(req.query);
+    const allUsers = await getAllUsersServices(req.query);
+    res.status(200).json({ success: true, data: allUsers });
   } catch (err) {
     res.status(400).json(err);
   }
