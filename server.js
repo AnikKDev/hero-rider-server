@@ -1,5 +1,11 @@
 const mongoose = require("mongoose");
 const app = require("./app");
+const cors = require("cors");
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 require("dotenv").config();
 // =========== database configuration =====
 mongoose.set("strictQuery", false);
